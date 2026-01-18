@@ -102,7 +102,7 @@ export default function PostContentsPage() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this content?')) return
+    if (!confirm('确定要删除此内容吗？')) return
     try {
       await postContentsApi.delete(id)
       fetchContents()
@@ -114,22 +114,22 @@ export default function PostContentsPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Post Content Pool</h1>
+        <h1 className="text-2xl font-bold">发推内容池</h1>
         <Button color="primary" onPress={handleOpenCreate}>
-          Add Content
+          添加内容
         </Button>
       </div>
 
-      <Table aria-label="Post contents table">
+      <Table aria-label="发推内容表格">
         <TableHeader>
-          <TableColumn>ORDER</TableColumn>
-          <TableColumn>TEXT</TableColumn>
-          <TableColumn>LINK</TableColumn>
-          <TableColumn>STATUS</TableColumn>
-          <TableColumn>USAGE</TableColumn>
-          <TableColumn>ACTIONS</TableColumn>
+          <TableColumn>排序</TableColumn>
+          <TableColumn>文本</TableColumn>
+          <TableColumn>链接</TableColumn>
+          <TableColumn>状态</TableColumn>
+          <TableColumn>使用情况</TableColumn>
+          <TableColumn>操作</TableColumn>
         </TableHeader>
-        <TableBody isLoading={loading} emptyContent="No contents found">
+        <TableBody isLoading={loading} emptyContent="暂无内容">
           {contents.map((content) => (
             <TableRow key={content.id}>
               <TableCell>{content.sort_order}</TableCell>
@@ -153,21 +153,21 @@ export default function PostContentsPage() {
                   color={content.status === 'active' ? 'success' : 'default'} 
                   size="sm"
                 >
-                  {content.status}
+                  {content.status === 'active' ? '启用' : '停用'}
                 </Chip>
               </TableCell>
               <TableCell>
                 <div className="text-xs">
-                  <div>Count: {content.usage_count}</div>
+                  <div>次数: {content.usage_count}</div>
                   {content.last_used_at && (
-                    <div>Last: {new Date(content.last_used_at).toLocaleString()}</div>
+                    <div>最后: {new Date(content.last_used_at).toLocaleString()}</div>
                   )}
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex gap-2">
                   <Button size="sm" variant="flat" onPress={() => handleOpenEdit(content)}>
-                    Edit
+                    编辑
                   </Button>
                   <Button 
                     size="sm" 
@@ -175,10 +175,10 @@ export default function PostContentsPage() {
                     color={content.status === 'active' ? 'warning' : 'success'}
                     onPress={() => handleToggleStatus(content.id)}
                   >
-                    {content.status === 'active' ? 'Disable' : 'Enable'}
+                    {content.status === 'active' ? '停用' : '启用'}
                   </Button>
                   <Button size="sm" variant="flat" color="danger" onPress={() => handleDelete(content.id)}>
-                    Delete
+                    删除
                   </Button>
                 </div>
               </TableCell>
@@ -190,27 +190,27 @@ export default function PostContentsPage() {
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
         <ModalContent>
           <ModalHeader>
-            {editingContent ? 'Edit Content' : 'Add Content'}
+            {editingContent ? '编辑内容' : '添加内容'}
           </ModalHeader>
           <ModalBody>
             <div className="flex flex-col gap-4">
               <Textarea
-                label="Tweet Text"
-                placeholder="Enter tweet text..."
+                label="推文文本"
+                placeholder="输入推文文本..."
                 value={formData.text}
                 onChange={(e) => setFormData({ ...formData, text: e.target.value })}
                 minRows={3}
                 isRequired
               />
               <Input
-                label="Link (optional)"
+                label="链接（可选）"
                 placeholder="https://..."
                 value={formData.link}
                 onChange={(e) => setFormData({ ...formData, link: e.target.value })}
               />
               {formData.text && (
                 <div className="p-3 bg-gray-100 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-1">Preview:</p>
+                  <p className="text-sm text-gray-600 mb-1">预览：</p>
                   <p className="whitespace-pre-wrap">
                     {formData.text}
                     {formData.link && `\n${formData.link}`}
@@ -221,10 +221,10 @@ export default function PostContentsPage() {
           </ModalBody>
           <ModalFooter>
             <Button variant="flat" onPress={onClose}>
-              Cancel
+              取消
             </Button>
             <Button color="primary" onPress={handleSubmit}>
-              {editingContent ? 'Update' : 'Create'}
+              {editingContent ? '更新' : '创建'}
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -121,7 +121,7 @@ export default function ReplyTemplatesPage() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this template?')) return
+    if (!confirm('确定要删除此模板吗？')) return
     try {
       await replyTemplatesApi.delete(id)
       fetchData()
@@ -139,22 +139,22 @@ export default function ReplyTemplatesPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Reply Templates</h1>
+        <h1 className="text-2xl font-bold">回复模板</h1>
         <Button color="primary" onPress={handleOpenCreate}>
-          Add Template
+          添加模板
         </Button>
       </div>
 
-      <Table aria-label="Reply templates table">
+      <Table aria-label="回复模板表格">
         <TableHeader>
-          <TableColumn>ORDER</TableColumn>
-          <TableColumn>CONTENT</TableColumn>
-          <TableColumn>SCOPE</TableColumn>
-          <TableColumn>STATUS</TableColumn>
-          <TableColumn>USAGE</TableColumn>
-          <TableColumn>ACTIONS</TableColumn>
+          <TableColumn>排序</TableColumn>
+          <TableColumn>内容</TableColumn>
+          <TableColumn>适用范围</TableColumn>
+          <TableColumn>状态</TableColumn>
+          <TableColumn>使用情况</TableColumn>
+          <TableColumn>操作</TableColumn>
         </TableHeader>
-        <TableBody isLoading={loading} emptyContent="No templates found">
+        <TableBody isLoading={loading} emptyContent="暂无模板">
           {templates.map((template) => (
             <TableRow key={template.id}>
               <TableCell>{template.sort_order}</TableCell>
@@ -167,7 +167,7 @@ export default function ReplyTemplatesPage() {
                     color={template.scope === 'global' ? 'primary' : 'secondary'} 
                     size="sm"
                   >
-                    {template.scope}
+                    {template.scope === 'global' ? '全局' : '指定目标'}
                   </Chip>
                   {template.scope === 'target' && (
                     <span className="text-xs mt-1">{getTargetName(template.target_id)}</span>
@@ -179,21 +179,21 @@ export default function ReplyTemplatesPage() {
                   color={template.status === 'active' ? 'success' : 'default'} 
                   size="sm"
                 >
-                  {template.status}
+                  {template.status === 'active' ? '启用' : '停用'}
                 </Chip>
               </TableCell>
               <TableCell>
                 <div className="text-xs">
-                  <div>Count: {template.usage_count}</div>
+                  <div>次数: {template.usage_count}</div>
                   {template.last_used_at && (
-                    <div>Last: {new Date(template.last_used_at).toLocaleString()}</div>
+                    <div>最后: {new Date(template.last_used_at).toLocaleString()}</div>
                   )}
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex gap-2">
                   <Button size="sm" variant="flat" onPress={() => handleOpenEdit(template)}>
-                    Edit
+                    编辑
                   </Button>
                   <Button 
                     size="sm" 
@@ -201,10 +201,10 @@ export default function ReplyTemplatesPage() {
                     color={template.status === 'active' ? 'warning' : 'success'}
                     onPress={() => handleToggleStatus(template.id)}
                   >
-                    {template.status === 'active' ? 'Disable' : 'Enable'}
+                    {template.status === 'active' ? '停用' : '启用'}
                   </Button>
                   <Button size="sm" variant="flat" color="danger" onPress={() => handleDelete(template.id)}>
-                    Delete
+                    删除
                   </Button>
                 </div>
               </TableCell>
@@ -216,29 +216,29 @@ export default function ReplyTemplatesPage() {
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
         <ModalContent>
           <ModalHeader>
-            {editingTemplate ? 'Edit Template' : 'Add Template'}
+            {editingTemplate ? '编辑模板' : '添加模板'}
           </ModalHeader>
           <ModalBody>
             <div className="flex flex-col gap-4">
               <Textarea
-                label="Reply Content"
-                placeholder="Enter reply text..."
+                label="回复内容"
+                placeholder="输入回复文本..."
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 minRows={3}
                 isRequired
               />
               <Select
-                label="Scope"
+                label="适用范围"
                 selectedKeys={[formData.scope]}
                 onChange={(e) => setFormData({ ...formData, scope: e.target.value })}
               >
-                <SelectItem key="global">Global (all targets)</SelectItem>
-                <SelectItem key="target">Specific Target</SelectItem>
+                <SelectItem key="global">全局（所有目标）</SelectItem>
+                <SelectItem key="target">指定目标</SelectItem>
               </Select>
               {formData.scope === 'target' && (
                 <Select
-                  label="Target"
+                  label="目标"
                   selectedKeys={formData.target_id ? [formData.target_id] : []}
                   onChange={(e) => setFormData({ ...formData, target_id: e.target.value })}
                 >
@@ -253,10 +253,10 @@ export default function ReplyTemplatesPage() {
           </ModalBody>
           <ModalFooter>
             <Button variant="flat" onPress={onClose}>
-              Cancel
+              取消
             </Button>
             <Button color="primary" onPress={handleSubmit}>
-              {editingTemplate ? 'Update' : 'Create'}
+              {editingTemplate ? '更新' : '创建'}
             </Button>
           </ModalFooter>
         </ModalContent>

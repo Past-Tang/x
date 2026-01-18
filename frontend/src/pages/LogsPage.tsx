@@ -174,7 +174,7 @@ export default function LogsPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-white/80 text-sm">Last 24 Hours</p>
+                <p className="text-white/80 text-sm">最近24小时</p>
                 <p className="text-2xl font-bold text-white">{stats?.recent_24h || 0}</p>
               </div>
             </div>
@@ -190,7 +190,7 @@ export default function LogsPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-white/80 text-sm">Success</p>
+                <p className="text-white/80 text-sm">成功</p>
                 <p className="text-2xl font-bold text-white">{stats?.by_result.success || 0}</p>
               </div>
             </div>
@@ -206,7 +206,7 @@ export default function LogsPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-white/80 text-sm">Failed</p>
+                <p className="text-white/80 text-sm">失败</p>
                 <p className="text-2xl font-bold text-white">{stats?.by_result.failed || 0}</p>
               </div>
             </div>
@@ -222,11 +222,11 @@ export default function LogsPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-white/80 text-sm">By Type</p>
+                <p className="text-white/80 text-sm">按类型</p>
                 <div className="flex gap-1 mt-1 flex-wrap">
                   {stats && Object.entries(stats.by_type).map(([type, count]) => (
                     <Chip key={type} size="sm" className="bg-white/20 text-white text-xs">
-                      {type}: {count}
+                      {type === 'monitor' ? '监控' : type === 'reply' ? '回复' : type === 'post' ? '发推' : type}: {count}
                     </Chip>
                   ))}
                 </div>
@@ -245,32 +245,32 @@ export default function LogsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
             </div>
-            <h3 className="font-semibold text-gray-800">Filters</h3>
+            <h3 className="font-semibold text-gray-800">筛选条件</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
             <Select
-              label="Log Type"
+              label="日志类型"
               variant="bordered"
               size="sm"
               selectedKeys={filters.log_type ? [filters.log_type] : []}
               onChange={(e) => setFilters({ ...filters, log_type: e.target.value })}
             >
-              <SelectItem key="monitor">Monitor</SelectItem>
-              <SelectItem key="reply">Reply</SelectItem>
-              <SelectItem key="post">Post</SelectItem>
+              <SelectItem key="monitor">监控</SelectItem>
+              <SelectItem key="reply">回复</SelectItem>
+              <SelectItem key="post">发推</SelectItem>
             </Select>
             <Select
-              label="Result"
+              label="结果"
               variant="bordered"
               size="sm"
               selectedKeys={filters.result ? [filters.result] : []}
               onChange={(e) => setFilters({ ...filters, result: e.target.value })}
             >
-              <SelectItem key="success">Success</SelectItem>
-              <SelectItem key="failed">Failed</SelectItem>
+              <SelectItem key="success">成功</SelectItem>
+              <SelectItem key="failed">失败</SelectItem>
             </Select>
             <Select
-              label="Account"
+              label="账号"
               variant="bordered"
               size="sm"
               selectedKeys={filters.account_id ? [filters.account_id] : []}
@@ -281,7 +281,7 @@ export default function LogsPage() {
               ))}
             </Select>
             <Select
-              label="Target"
+              label="目标"
               variant="bordered"
               size="sm"
               selectedKeys={filters.target_id ? [filters.target_id] : []}
@@ -292,8 +292,8 @@ export default function LogsPage() {
               ))}
             </Select>
             <Input
-              label="Tweet ID"
-              placeholder="Tweet ID"
+              label="推文ID"
+              placeholder="推文ID"
               variant="bordered"
               size="sm"
               value={filters.tweet_id}
@@ -310,10 +310,10 @@ export default function LogsPage() {
                   </svg>
                 }
               >
-                Filter
+                筛选
               </Button>
               <Button variant="flat" onPress={handleClearFilters}>
-                Clear
+                清除
               </Button>
             </div>
           </div>
@@ -325,20 +325,20 @@ export default function LogsPage() {
         <CardBody className="p-0">
           <div className="flex justify-between items-center p-6 border-b border-gray-100">
             <div>
-              <h2 className="text-lg font-semibold text-gray-800">Log Entries</h2>
-              <p className="text-sm text-gray-500">Total: {pagination.total} entries</p>
+              <h2 className="text-lg font-semibold text-gray-800">日志记录</h2>
+              <p className="text-sm text-gray-500">共 {pagination.total} 条记录</p>
             </div>
           </div>
 
-          <Table aria-label="Logs table" removeWrapper className="min-h-[200px]">
+          <Table aria-label="日志表格" removeWrapper className="min-h-[200px]">
             <TableHeader>
-              <TableColumn className="bg-gray-50/50">TIME</TableColumn>
-              <TableColumn className="bg-gray-50/50">TYPE</TableColumn>
-              <TableColumn className="bg-gray-50/50">ACCOUNT</TableColumn>
-              <TableColumn className="bg-gray-50/50">TARGET/JOB</TableColumn>
-              <TableColumn className="bg-gray-50/50">TWEET ID</TableColumn>
-              <TableColumn className="bg-gray-50/50">RESULT</TableColumn>
-              <TableColumn className="bg-gray-50/50">DETAILS</TableColumn>
+              <TableColumn className="bg-gray-50/50">时间</TableColumn>
+              <TableColumn className="bg-gray-50/50">类型</TableColumn>
+              <TableColumn className="bg-gray-50/50">账号</TableColumn>
+              <TableColumn className="bg-gray-50/50">目标/任务</TableColumn>
+              <TableColumn className="bg-gray-50/50">推文ID</TableColumn>
+              <TableColumn className="bg-gray-50/50">结果</TableColumn>
+              <TableColumn className="bg-gray-50/50">详情</TableColumn>
             </TableHeader>
             <TableBody isLoading={loading} emptyContent={
               <div className="py-12 text-center">
@@ -347,8 +347,8 @@ export default function LogsPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
-                <p className="text-gray-500 font-medium">No logs found</p>
-                <p className="text-gray-400 text-sm">Logs will appear here when actions are performed</p>
+                <p className="text-gray-500 font-medium">暂无日志</p>
+                <p className="text-gray-400 text-sm">执行操作后日志将在此显示</p>
               </div>
             }>
               {logs.map((log) => (

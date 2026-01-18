@@ -64,17 +64,17 @@ export default function SettingsPage() {
       })
       
       await settingsApi.updateBatch(settingsData)
-      alert('Settings saved successfully!')
+      alert('设置保存成功！')
     } catch (error) {
       console.error('Failed to save settings:', error)
-      alert('Failed to save settings')
+      alert('保存设置失败')
     } finally {
       setSaving(false)
     }
   }
 
   const groupedSettings = {
-    'API Configuration': {
+    'API 配置': {
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
@@ -85,7 +85,7 @@ export default function SettingsPage() {
         s.key.includes('api') || s.key.includes('url') || s.key.includes('key')
       ),
     },
-    'Rate Limiting': {
+    '频率限制': {
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -96,7 +96,7 @@ export default function SettingsPage() {
         s.key.includes('limit') || s.key.includes('delay')
       ),
     },
-    'Account Settings': {
+    '账号设置': {
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -107,7 +107,7 @@ export default function SettingsPage() {
         s.key.includes('account') && !s.key.includes('limit')
       ),
     },
-    'Selection Strategies': {
+    '选择策略': {
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -134,7 +134,7 @@ export default function SettingsPage() {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Chip color="success" variant="flat" size="sm">
-            {settings.length} settings
+            {settings.length} 项设置
           </Chip>
         </div>
         <Button 
@@ -150,7 +150,7 @@ export default function SettingsPage() {
             )
           }
         >
-          Save All Settings
+          保存所有设置
         </Button>
       </div>
 
@@ -168,7 +168,7 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-white">{group}</h3>
-                      <p className="text-white/70 text-sm">{config.settings.length} settings</p>
+                      <p className="text-white/70 text-sm">{config.settings.length} 项设置</p>
                     </div>
                   </div>
                 </div>
@@ -213,8 +213,8 @@ export default function SettingsPage() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-white">All Settings</h3>
-                <p className="text-white/70 text-sm">Complete list of all configuration options</p>
+                <h3 className="text-lg font-semibold text-white">所有设置</h3>
+                <p className="text-white/70 text-sm">完整配置选项列表</p>
               </div>
             </div>
           </div>

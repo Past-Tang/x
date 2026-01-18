@@ -5,7 +5,7 @@ import { useState } from 'react'
 const navItems = [
   { 
     path: '/accounts', 
-    label: 'Account Pool', 
+    label: '账号池', 
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -14,7 +14,7 @@ const navItems = [
   },
   { 
     path: '/targets', 
-    label: 'Monitor Targets', 
+    label: '监控目标', 
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -24,7 +24,7 @@ const navItems = [
   },
   { 
     path: '/reply-templates', 
-    label: 'Reply Templates', 
+    label: '回复模板', 
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -33,7 +33,7 @@ const navItems = [
   },
   { 
     path: '/post-jobs', 
-    label: 'Auto Post Jobs', 
+    label: '自动发推', 
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -42,7 +42,7 @@ const navItems = [
   },
   { 
     path: '/post-contents', 
-    label: 'Content Pool', 
+    label: '内容池', 
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -51,7 +51,7 @@ const navItems = [
   },
   { 
     path: '/logs', 
-    label: 'Execution Logs', 
+    label: '执行日志', 
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -60,7 +60,7 @@ const navItems = [
   },
   { 
     path: '/settings', 
-    label: 'Settings', 
+    label: '系统设置', 
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -87,7 +87,7 @@ export default function Layout() {
                   <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
                 </svg>
               </div>
-              <span className="font-bold text-white text-lg">Twitter Monitor</span>
+              <span className="font-bold text-white text-lg">推特监控</span>
             </div>
           )}
           <button 
@@ -138,8 +138,8 @@ export default function Layout() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">System Status</p>
-                  <Chip color="success" size="sm" variant="flat">Online</Chip>
+                  <p className="text-sm font-semibold text-gray-800">系统状态</p>
+                  <Chip color="success" size="sm" variant="flat">在线</Chip>
                 </div>
               </div>
             </div>
@@ -153,7 +153,7 @@ export default function Layout() {
         <header className="h-16 bg-white/80 backdrop-blur-md border-b border-gray-200 flex items-center justify-between px-6 sticky top-0 z-10">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-semibold text-gray-800">
-              {navItems.find(item => item.path === location.pathname)?.label || 'Dashboard'}
+              {navItems.find(item => item.path === location.pathname)?.label || '控制面板'}
             </h1>
           </div>
           <div className="flex items-center gap-4">

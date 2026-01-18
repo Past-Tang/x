@@ -122,7 +122,7 @@ export default function AccountsPage() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this account?')) return
+    if (!confirm('确定要删除此账号吗？')) return
     try {
       await accountsApi.delete(id)
       fetchAccounts()
@@ -156,7 +156,7 @@ export default function AccountsPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-white/80 text-sm">Total Accounts</p>
+                <p className="text-white/80 text-sm">账号总数</p>
                 <p className="text-2xl font-bold text-white">{accounts.length}</p>
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function AccountsPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-white/80 text-sm">Active</p>
+                <p className="text-white/80 text-sm">启用中</p>
                 <p className="text-2xl font-bold text-white">{activeCount}</p>
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function AccountsPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-white/80 text-sm">Suspect</p>
+                <p className="text-white/80 text-sm">疑似失效</p>
                 <p className="text-2xl font-bold text-white">{suspectCount}</p>
               </div>
             </div>
@@ -204,7 +204,7 @@ export default function AccountsPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-white/80 text-sm">Hourly Actions</p>
+                <p className="text-white/80 text-sm">每小时操作数</p>
                 <p className="text-2xl font-bold text-white">{accounts.reduce((sum, a) => sum + a.hourly_action_count, 0)}</p>
               </div>
             </div>
@@ -217,8 +217,8 @@ export default function AccountsPage() {
         <CardBody className="p-0">
           <div className="flex justify-between items-center p-6 border-b border-gray-100">
             <div>
-              <h2 className="text-lg font-semibold text-gray-800">Account List</h2>
-              <p className="text-sm text-gray-500">Manage your Twitter account tokens</p>
+              <h2 className="text-lg font-semibold text-gray-800">账号列表</h2>
+              <p className="text-sm text-gray-500">管理您的推特账号令牌</p>
             </div>
             <Button 
               color="primary" 
@@ -230,19 +230,19 @@ export default function AccountsPage() {
                 </svg>
               }
             >
-              Add Account
+              添加账号
             </Button>
           </div>
 
-          <Table aria-label="Accounts table" removeWrapper className="min-h-[200px]">
+          <Table aria-label="账号表格" removeWrapper className="min-h-[200px]">
             <TableHeader>
-              <TableColumn className="bg-gray-50/50">NAME</TableColumn>
-              <TableColumn className="bg-gray-50/50">HANDLE</TableColumn>
-              <TableColumn className="bg-gray-50/50">TOKEN</TableColumn>
-              <TableColumn className="bg-gray-50/50">STATUS</TableColumn>
-              <TableColumn className="bg-gray-50/50">FAILURES</TableColumn>
-              <TableColumn className="bg-gray-50/50">LAST SUCCESS</TableColumn>
-              <TableColumn className="bg-gray-50/50">ACTIONS</TableColumn>
+              <TableColumn className="bg-gray-50/50">名称</TableColumn>
+              <TableColumn className="bg-gray-50/50">用户名</TableColumn>
+              <TableColumn className="bg-gray-50/50">令牌</TableColumn>
+              <TableColumn className="bg-gray-50/50">状态</TableColumn>
+              <TableColumn className="bg-gray-50/50">失败次数</TableColumn>
+              <TableColumn className="bg-gray-50/50">最后成功</TableColumn>
+              <TableColumn className="bg-gray-50/50">操作</TableColumn>
             </TableHeader>
             <TableBody isLoading={loading} emptyContent={
               <div className="py-12 text-center">
@@ -251,8 +251,8 @@ export default function AccountsPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
-                <p className="text-gray-500 font-medium">No accounts found</p>
-                <p className="text-gray-400 text-sm">Get started by adding your first account</p>
+                <p className="text-gray-500 font-medium">暂无账号</p>
+                <p className="text-gray-400 text-sm">点击添加您的第一个账号</p>
               </div>
             }>
               {accounts.map((account) => (
@@ -283,13 +283,13 @@ export default function AccountsPage() {
                   </TableCell>
                   <TableCell>
                     {account.consecutive_failures > 0 ? (
-                      <Tooltip content={account.last_failure_reason || 'Unknown error'}>
+                      <Tooltip content={account.last_failure_reason || '未知错误'}>
                         <Chip color="danger" size="sm" variant="flat">
-                          {account.consecutive_failures} failures
+                          {account.consecutive_failures} 次失败
                         </Chip>
                       </Tooltip>
                     ) : (
-                      <span className="text-gray-400">None</span>
+                      <span className="text-gray-400">无</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -358,16 +358,16 @@ export default function AccountsPage() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-semibold">{editingAccount ? 'Edit Account' : 'Add New Account'}</h3>
-                <p className="text-sm text-gray-500">Enter the account details below</p>
+                <h3 className="text-lg font-semibold">{editingAccount ? '编辑账号' : '添加新账号'}</h3>
+                <p className="text-sm text-gray-500">请填写账号详细信息</p>
               </div>
             </div>
           </ModalHeader>
           <ModalBody className="py-6">
             <div className="flex flex-col gap-4">
               <Input
-                label="Name"
-                placeholder="Account name"
+                label="名称"
+                placeholder="账号名称"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 isRequired
@@ -375,16 +375,16 @@ export default function AccountsPage() {
                 labelPlacement="outside"
               />
               <Input
-                label="Twitter Handle"
-                placeholder="@handle"
+                label="推特用户名"
+                placeholder="@用户名"
                 value={formData.twitter_handle}
                 onChange={(e) => setFormData({ ...formData, twitter_handle: e.target.value })}
                 variant="bordered"
                 labelPlacement="outside"
               />
               <Input
-                label={editingAccount ? "New Auth Token (leave empty to keep current)" : "Auth Token"}
-                placeholder="Auth token"
+                label={editingAccount ? "新授权令牌（留空保持原值）" : "授权令牌"}
+                placeholder="授权令牌"
                 type="password"
                 value={formData.auth_token}
                 onChange={(e) => setFormData({ ...formData, auth_token: e.target.value })}
@@ -394,7 +394,7 @@ export default function AccountsPage() {
               />
               <div className="grid grid-cols-2 gap-4">
                 <Input
-                  label="Weight"
+                  label="权重"
                   type="number"
                   min={1}
                   value={String(formData.weight)}
@@ -403,7 +403,7 @@ export default function AccountsPage() {
                   labelPlacement="outside"
                 />
                 <Input
-                  label="Max Concurrent Usage"
+                  label="最大并发使用数"
                   type="number"
                   min={1}
                   value={String(formData.max_concurrent_usage)}
@@ -416,14 +416,14 @@ export default function AccountsPage() {
           </ModalBody>
           <ModalFooter className="border-t border-gray-100 pt-4">
             <Button variant="flat" onPress={onClose}>
-              Cancel
+              取消
             </Button>
             <Button 
               color="primary" 
               onPress={handleSubmit}
               className="bg-gradient-to-r from-blue-500 to-indigo-500"
             >
-              {editingAccount ? 'Update Account' : 'Create Account'}
+              {editingAccount ? '更新账号' : '创建账号'}
             </Button>
           </ModalFooter>
         </ModalContent>

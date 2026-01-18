@@ -121,7 +121,7 @@ export default function PostJobsPage() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this job?')) return
+    if (!confirm('确定要删除此任务吗？')) return
     try {
       await postJobsApi.delete(id)
       fetchJobs()
@@ -133,24 +133,24 @@ export default function PostJobsPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Auto Post Jobs</h1>
+        <h1 className="text-2xl font-bold">自动发推任务</h1>
         <Button color="primary" onPress={handleOpenCreate}>
-          Add Job
+          添加任务
         </Button>
       </div>
 
-      <Table aria-label="Post jobs table">
+      <Table aria-label="发推任务表格">
         <TableHeader>
-          <TableColumn>NAME</TableColumn>
-          <TableColumn>STATUS</TableColumn>
-          <TableColumn>INTERVAL</TableColumn>
-          <TableColumn>STRATEGY</TableColumn>
-          <TableColumn>LAST RUN</TableColumn>
-          <TableColumn>NEXT RUN</TableColumn>
-          <TableColumn>STATS</TableColumn>
-          <TableColumn>ACTIONS</TableColumn>
+          <TableColumn>名称</TableColumn>
+          <TableColumn>状态</TableColumn>
+          <TableColumn>间隔</TableColumn>
+          <TableColumn>策略</TableColumn>
+          <TableColumn>最后运行</TableColumn>
+          <TableColumn>下次运行</TableColumn>
+          <TableColumn>统计</TableColumn>
+          <TableColumn>操作</TableColumn>
         </TableHeader>
-        <TableBody isLoading={loading} emptyContent="No jobs found">
+        <TableBody isLoading={loading} emptyContent="暂无任务">
           {jobs.map((job) => (
             <TableRow key={job.id}>
               <TableCell>{job.name}</TableCell>
@@ -159,13 +159,13 @@ export default function PostJobsPage() {
                   color={job.status === 'active' ? 'success' : 'default'} 
                   size="sm"
                 >
-                  {job.status}
+                  {job.status === 'active' ? '启用' : '停用'}
                 </Chip>
               </TableCell>
-              <TableCell>{job.interval_minutes}m</TableCell>
+              <TableCell>{job.interval_minutes}分钟</TableCell>
               <TableCell>
                 <Chip size="sm" variant="flat">
-                  {job.account_strategy}
+                  {job.account_strategy === 'round_robin' ? '轮换' : job.account_strategy === 'random' ? '随机' : job.account_strategy}
                 </Chip>
               </TableCell>
               <TableCell>
@@ -173,7 +173,7 @@ export default function PostJobsPage() {
                   <span className="text-xs">
                     {job.last_run_at 
                       ? new Date(job.last_run_at).toLocaleString()
-                      : 'Never'}
+                      : '从未'}
                   </span>
                   {job.last_run_result && (
                     <Chip 
@@ -181,7 +181,7 @@ export default function PostJobsPage() {
                       size="sm"
                       className="mt-1"
                     >
-                      {job.last_run_result}
+                      {job.last_run_result === 'success' ? '成功' : '失败'}
                     </Chip>
                   )}
                 </div>
@@ -195,14 +195,14 @@ export default function PostJobsPage() {
               </TableCell>
               <TableCell>
                 <div className="text-xs">
-                  <div>Posts: {job.total_posts}</div>
-                  <div>Index: {job.current_content_index}</div>
+                  <div>发推: {job.total_posts}</div>
+                  <div>索引: {job.current_content_index}</div>
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex gap-2 flex-wrap">
                   <Button size="sm" variant="flat" onPress={() => handleOpenEdit(job)}>
-                    Edit
+                    编辑
                   </Button>
                   <Button 
                     size="sm" 
@@ -210,7 +210,7 @@ export default function PostJobsPage() {
                     color="primary"
                     onPress={() => handleRunNow(job.id)}
                   >
-                    Run Now
+                    立即运行
                   </Button>
                   <Button 
                     size="sm" 
@@ -218,10 +218,10 @@ export default function PostJobsPage() {
                     color={job.status === 'active' ? 'warning' : 'success'}
                     onPress={() => handleToggleStatus(job.id)}
                   >
-                    {job.status === 'active' ? 'Disable' : 'Enable'}
+                    {job.status === 'active' ? '停用' : '启用'}
                   </Button>
                   <Button size="sm" variant="flat" color="danger" onPress={() => handleDelete(job.id)}>
-                    Delete
+                    删除
                   </Button>
                 </div>
               </TableCell>
@@ -233,44 +233,44 @@ export default function PostJobsPage() {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           <ModalHeader>
-            {editingJob ? 'Edit Job' : 'Add Job'}
+            {editingJob ? '编辑任务' : '添加任务'}
           </ModalHeader>
           <ModalBody>
             <div className="flex flex-col gap-4">
               <Input
-                label="Job Name"
-                placeholder="Enter job name"
+                label="任务名称"
+                placeholder="输入任务名称"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 isRequired
               />
               <Select
-                label="Interval"
+                label="执行间隔"
                 selectedKeys={[String(formData.interval_minutes)]}
                 onChange={(e) => setFormData({ ...formData, interval_minutes: parseInt(e.target.value) })}
               >
-                <SelectItem key="15">15 minutes</SelectItem>
-                <SelectItem key="30">30 minutes</SelectItem>
-                <SelectItem key="60">60 minutes</SelectItem>
-                <SelectItem key="120">2 hours</SelectItem>
+                <SelectItem key="15">15 分钟</SelectItem>
+                <SelectItem key="30">30 分钟</SelectItem>
+                <SelectItem key="60">60 分钟</SelectItem>
+                <SelectItem key="120">2 小时</SelectItem>
               </Select>
               <Select
-                label="Account Strategy"
+                label="账号策略"
                 selectedKeys={[formData.account_strategy]}
                 onChange={(e) => setFormData({ ...formData, account_strategy: e.target.value })}
               >
-                <SelectItem key="round_robin">Round Robin</SelectItem>
-                <SelectItem key="random">Random</SelectItem>
-                <SelectItem key="weighted">Weighted</SelectItem>
+                <SelectItem key="round_robin">轮换</SelectItem>
+                <SelectItem key="random">随机</SelectItem>
+                <SelectItem key="weighted">权重</SelectItem>
               </Select>
             </div>
           </ModalBody>
           <ModalFooter>
             <Button variant="flat" onPress={onClose}>
-              Cancel
+              取消
             </Button>
             <Button color="primary" onPress={handleSubmit}>
-              {editingJob ? 'Update' : 'Create'}
+              {editingJob ? '更新' : '创建'}
             </Button>
           </ModalFooter>
         </ModalContent>

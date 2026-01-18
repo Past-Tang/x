@@ -16,6 +16,8 @@ import {
   useDisclosure,
   Chip,
   Tooltip,
+  Card,
+  CardBody,
 } from '@heroui/react'
 import { accountsApi } from '../services/api'
 
@@ -138,83 +140,230 @@ export default function AccountsPage() {
     }
   }
 
+  const activeCount = accounts.filter(a => a.status === 'active').length
+  const suspectCount = accounts.filter(a => a.status === 'suspect').length
+
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Account Pool</h1>
-        <Button color="primary" onPress={handleOpenCreate}>
-          Add Account
-        </Button>
+    <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/20">
+          <CardBody className="py-5">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 rounded-xl">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-white/80 text-sm">Total Accounts</p>
+                <p className="text-2xl font-bold text-white">{accounts.length}</p>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/20">
+          <CardBody className="py-5">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 rounded-xl">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-white/80 text-sm">Active</p>
+                <p className="text-2xl font-bold text-white">{activeCount}</p>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/20">
+          <CardBody className="py-5">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 rounded-xl">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-white/80 text-sm">Suspect</p>
+                <p className="text-2xl font-bold text-white">{suspectCount}</p>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/20">
+          <CardBody className="py-5">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 rounded-xl">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-white/80 text-sm">Hourly Actions</p>
+                <p className="text-2xl font-bold text-white">{accounts.reduce((sum, a) => sum + a.hourly_action_count, 0)}</p>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
       </div>
 
-      <Table aria-label="Accounts table">
-        <TableHeader>
-          <TableColumn>NAME</TableColumn>
-          <TableColumn>HANDLE</TableColumn>
-          <TableColumn>TOKEN</TableColumn>
-          <TableColumn>STATUS</TableColumn>
-          <TableColumn>FAILURES</TableColumn>
-          <TableColumn>LAST SUCCESS</TableColumn>
-          <TableColumn>ACTIONS</TableColumn>
-        </TableHeader>
-        <TableBody isLoading={loading} emptyContent="No accounts found">
-          {accounts.map((account) => (
-            <TableRow key={account.id}>
-              <TableCell>{account.name}</TableCell>
-              <TableCell>{account.twitter_handle || '-'}</TableCell>
-              <TableCell>
-                <code className="text-xs">{account.token_masked}</code>
-              </TableCell>
-              <TableCell>
-                <Chip color={getStatusColor(account.status)} size="sm">
-                  {account.status}
-                </Chip>
-              </TableCell>
-              <TableCell>
-                {account.consecutive_failures > 0 ? (
-                  <Tooltip content={account.last_failure_reason || 'Unknown error'}>
-                    <Chip color="danger" size="sm">
-                      {account.consecutive_failures}
-                    </Chip>
-                  </Tooltip>
-                ) : (
-                  <span className="text-gray-400">0</span>
-                )}
-              </TableCell>
-              <TableCell>
-                {account.last_success_at 
-                  ? new Date(account.last_success_at).toLocaleString()
-                  : '-'}
-              </TableCell>
-              <TableCell>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="flat" onPress={() => handleOpenEdit(account)}>
-                    Edit
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="flat"
-                    color={account.status === 'active' ? 'warning' : 'success'}
-                    onPress={() => handleToggleStatus(account.id)}
-                  >
-                    {account.status === 'active' ? 'Disable' : 'Enable'}
-                  </Button>
-                  <Button size="sm" variant="flat" color="danger" onPress={() => handleDelete(account.id)}>
-                    Delete
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      {/* Main Content Card */}
+      <Card className="shadow-xl">
+        <CardBody className="p-0">
+          <div className="flex justify-between items-center p-6 border-b border-gray-100">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-800">Account List</h2>
+              <p className="text-sm text-gray-500">Manage your Twitter account tokens</p>
+            </div>
+            <Button 
+              color="primary" 
+              onPress={handleOpenCreate}
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 shadow-lg shadow-blue-500/30"
+              startContent={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              }
+            >
+              Add Account
+            </Button>
+          </div>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+          <Table aria-label="Accounts table" removeWrapper className="min-h-[200px]">
+            <TableHeader>
+              <TableColumn className="bg-gray-50/50">NAME</TableColumn>
+              <TableColumn className="bg-gray-50/50">HANDLE</TableColumn>
+              <TableColumn className="bg-gray-50/50">TOKEN</TableColumn>
+              <TableColumn className="bg-gray-50/50">STATUS</TableColumn>
+              <TableColumn className="bg-gray-50/50">FAILURES</TableColumn>
+              <TableColumn className="bg-gray-50/50">LAST SUCCESS</TableColumn>
+              <TableColumn className="bg-gray-50/50">ACTIONS</TableColumn>
+            </TableHeader>
+            <TableBody isLoading={loading} emptyContent={
+              <div className="py-12 text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <p className="text-gray-500 font-medium">No accounts found</p>
+                <p className="text-gray-400 text-sm">Get started by adding your first account</p>
+              </div>
+            }>
+              {accounts.map((account) => (
+                <TableRow key={account.id} className="hover:bg-gray-50/50 transition-colors">
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                        {account.name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="font-medium text-gray-800">{account.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-gray-600">{account.twitter_handle || '-'}</span>
+                  </TableCell>
+                  <TableCell>
+                    <code className="text-xs bg-gray-100 px-2 py-1 rounded">{account.token_masked}</code>
+                  </TableCell>
+                  <TableCell>
+                    <Chip 
+                      color={getStatusColor(account.status)} 
+                      size="sm"
+                      variant="flat"
+                      className="capitalize"
+                    >
+                      {account.status}
+                    </Chip>
+                  </TableCell>
+                  <TableCell>
+                    {account.consecutive_failures > 0 ? (
+                      <Tooltip content={account.last_failure_reason || 'Unknown error'}>
+                        <Chip color="danger" size="sm" variant="flat">
+                          {account.consecutive_failures} failures
+                        </Chip>
+                      </Tooltip>
+                    ) : (
+                      <span className="text-gray-400">None</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-gray-600 text-sm">
+                      {account.last_success_at 
+                        ? new Date(account.last_success_at).toLocaleString()
+                        : '-'}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button 
+                        size="sm" 
+                        variant="light" 
+                        isIconOnly
+                        onPress={() => handleOpenEdit(account)}
+                      >
+                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="light"
+                        isIconOnly
+                        color={account.status === 'active' ? 'warning' : 'success'}
+                        onPress={() => handleToggleStatus(account.id)}
+                      >
+                        {account.status === 'active' ? (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        )}
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="light" 
+                        isIconOnly
+                        color="danger" 
+                        onPress={() => handleDelete(account.id)}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardBody>
+      </Card>
+
+      <Modal isOpen={isOpen} onClose={onClose} size="lg" className="bg-white">
         <ModalContent>
-          <ModalHeader>
-            {editingAccount ? 'Edit Account' : 'Add Account'}
+          <ModalHeader className="border-b border-gray-100 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">{editingAccount ? 'Edit Account' : 'Add New Account'}</h3>
+                <p className="text-sm text-gray-500">Enter the account details below</p>
+              </div>
+            </div>
           </ModalHeader>
-          <ModalBody>
+          <ModalBody className="py-6">
             <div className="flex flex-col gap-4">
               <Input
                 label="Name"
@@ -222,12 +371,16 @@ export default function AccountsPage() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 isRequired
+                variant="bordered"
+                labelPlacement="outside"
               />
               <Input
                 label="Twitter Handle"
                 placeholder="@handle"
                 value={formData.twitter_handle}
                 onChange={(e) => setFormData({ ...formData, twitter_handle: e.target.value })}
+                variant="bordered"
+                labelPlacement="outside"
               />
               <Input
                 label={editingAccount ? "New Auth Token (leave empty to keep current)" : "Auth Token"}
@@ -236,29 +389,41 @@ export default function AccountsPage() {
                 value={formData.auth_token}
                 onChange={(e) => setFormData({ ...formData, auth_token: e.target.value })}
                 isRequired={!editingAccount}
+                variant="bordered"
+                labelPlacement="outside"
               />
-              <Input
-                label="Weight"
-                type="number"
-                min={1}
-                value={String(formData.weight)}
-                onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) || 1 })}
-              />
-              <Input
-                label="Max Concurrent Usage"
-                type="number"
-                min={1}
-                value={String(formData.max_concurrent_usage)}
-                onChange={(e) => setFormData({ ...formData, max_concurrent_usage: parseInt(e.target.value) || 3 })}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Weight"
+                  type="number"
+                  min={1}
+                  value={String(formData.weight)}
+                  onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) || 1 })}
+                  variant="bordered"
+                  labelPlacement="outside"
+                />
+                <Input
+                  label="Max Concurrent Usage"
+                  type="number"
+                  min={1}
+                  value={String(formData.max_concurrent_usage)}
+                  onChange={(e) => setFormData({ ...formData, max_concurrent_usage: parseInt(e.target.value) || 3 })}
+                  variant="bordered"
+                  labelPlacement="outside"
+                />
+              </div>
             </div>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className="border-t border-gray-100 pt-4">
             <Button variant="flat" onPress={onClose}>
               Cancel
             </Button>
-            <Button color="primary" onPress={handleSubmit}>
-              {editingAccount ? 'Update' : 'Create'}
+            <Button 
+              color="primary" 
+              onPress={handleSubmit}
+              className="bg-gradient-to-r from-blue-500 to-indigo-500"
+            >
+              {editingAccount ? 'Update Account' : 'Create Account'}
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -1,0 +1,234 @@
+import { useState, useEffect } from 'react'
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Button,
+  Input,
+  Textarea,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Chip,
+} from '@heroui/react'
+import { postContentsApi } from '../services/api'
+
+interface PostContent {
+  id: number
+  text: string
+  link: string | null
+  status: string
+  sort_order: number
+  usage_count: number
+  last_used_at: string | null
+}
+
+export default function PostContentsPage() {
+  const [contents, setContents] = useState<PostContent[]>([])
+  const [loading, setLoading] = useState(true)
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [editingContent, setEditingContent] = useState<PostContent | null>(null)
+  const [formData, setFormData] = useState({
+    text: '',
+    link: '',
+  })
+
+  const fetchContents = async () => {
+    try {
+      const response = await postContentsApi.list()
+      setContents(response.data.data)
+    } catch (error) {
+      console.error('Failed to fetch contents:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchContents()
+  }, [])
+
+  const handleOpenCreate = () => {
+    setEditingContent(null)
+    setFormData({
+      text: '',
+      link: '',
+    })
+    onOpen()
+  }
+
+  const handleOpenEdit = (content: PostContent) => {
+    setEditingContent(content)
+    setFormData({
+      text: content.text,
+      link: content.link || '',
+    })
+    onOpen()
+  }
+
+  const handleSubmit = async () => {
+    try {
+      const data = {
+        text: formData.text,
+        link: formData.link || null,
+      }
+
+      if (editingContent) {
+        await postContentsApi.update(editingContent.id, data)
+      } else {
+        await postContentsApi.create(data)
+      }
+      
+      onClose()
+      fetchContents()
+    } catch (error) {
+      console.error('Failed to save content:', error)
+    }
+  }
+
+  const handleToggleStatus = async (id: number) => {
+    try {
+      await postContentsApi.toggleStatus(id)
+      fetchContents()
+    } catch (error) {
+      console.error('Failed to toggle status:', error)
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this content?')) return
+    try {
+      await postContentsApi.delete(id)
+      fetchContents()
+    } catch (error) {
+      console.error('Failed to delete content:', error)
+    }
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Post Content Pool</h1>
+        <Button color="primary" onPress={handleOpenCreate}>
+          Add Content
+        </Button>
+      </div>
+
+      <Table aria-label="Post contents table">
+        <TableHeader>
+          <TableColumn>ORDER</TableColumn>
+          <TableColumn>TEXT</TableColumn>
+          <TableColumn>LINK</TableColumn>
+          <TableColumn>STATUS</TableColumn>
+          <TableColumn>USAGE</TableColumn>
+          <TableColumn>ACTIONS</TableColumn>
+        </TableHeader>
+        <TableBody isLoading={loading} emptyContent="No contents found">
+          {contents.map((content) => (
+            <TableRow key={content.id}>
+              <TableCell>{content.sort_order}</TableCell>
+              <TableCell>
+                <div className="max-w-md truncate">{content.text}</div>
+              </TableCell>
+              <TableCell>
+                {content.link ? (
+                  <a 
+                    href={content.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline truncate max-w-xs block"
+                  >
+                    {content.link}
+                  </a>
+                ) : '-'}
+              </TableCell>
+              <TableCell>
+                <Chip 
+                  color={content.status === 'active' ? 'success' : 'default'} 
+                  size="sm"
+                >
+                  {content.status}
+                </Chip>
+              </TableCell>
+              <TableCell>
+                <div className="text-xs">
+                  <div>Count: {content.usage_count}</div>
+                  {content.last_used_at && (
+                    <div>Last: {new Date(content.last_used_at).toLocaleString()}</div>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="flat" onPress={() => handleOpenEdit(content)}>
+                    Edit
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="flat"
+                    color={content.status === 'active' ? 'warning' : 'success'}
+                    onPress={() => handleToggleStatus(content.id)}
+                  >
+                    {content.status === 'active' ? 'Disable' : 'Enable'}
+                  </Button>
+                  <Button size="sm" variant="flat" color="danger" onPress={() => handleDelete(content.id)}>
+                    Delete
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+        <ModalContent>
+          <ModalHeader>
+            {editingContent ? 'Edit Content' : 'Add Content'}
+          </ModalHeader>
+          <ModalBody>
+            <div className="flex flex-col gap-4">
+              <Textarea
+                label="Tweet Text"
+                placeholder="Enter tweet text..."
+                value={formData.text}
+                onChange={(e) => setFormData({ ...formData, text: e.target.value })}
+                minRows={3}
+                isRequired
+              />
+              <Input
+                label="Link (optional)"
+                placeholder="https://..."
+                value={formData.link}
+                onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+              />
+              {formData.text && (
+                <div className="p-3 bg-gray-100 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Preview:</p>
+                  <p className="whitespace-pre-wrap">
+                    {formData.text}
+                    {formData.link && `\n${formData.link}`}
+                  </p>
+                </div>
+              )}
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="flat" onPress={onClose}>
+              Cancel
+            </Button>
+            <Button color="primary" onPress={handleSubmit}>
+              {editingContent ? 'Update' : 'Create'}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </div>
+  )
+}

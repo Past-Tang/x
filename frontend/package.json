@@ -11,7 +11,6 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "type": "module",
   "dependencies": {
     "@heroui/react": "^2.8.7",
     "axios": "^1.13.2",

@@ -41,6 +41,11 @@ pip install -r requirements.txt
 python run.py
 ```
 
+For development with debug mode enabled:
+```bash
+FLASK_DEBUG=true python run.py
+```
+
 The backend will run on http://localhost:5000
 
 ### Frontend
